@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WriteEngin — SEO Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; position:sticky; top:0; z-index:100; background:rgba(9,9,11,0.8); backdrop-filter:blur(12px); }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nav-links { display:flex; gap:2rem; } .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; } .nav-links a.active { color:#fafafa; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .container { max-width:1200px; margin:0 auto; padding:2rem; }
+        .page-header { margin-bottom:2rem; } .page-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; } .page-header p { color:#71717a; }
+        .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+        .form-card, .output-card { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:2rem; }
+        .form-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:1.5rem; }
+        .form-field { margin-bottom:1.25rem; } .form-field label { display:block; font-weight:600; font-size:0.85rem; color:#a1a1aa; margin-bottom:0.5rem; }
+        .form-field input { width:100%; padding:0.75rem 1rem; background:#0f172a; border:1px solid #1e293b; border-radius:0.5rem; color:#fafafa; font-size:0.95rem; outline:none; }
+        .form-field input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+        .generate-btn { width:100%; padding:1rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.75rem; font-weight:700; font-size:1.05rem; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 14px rgba(99,102,241,0.35); margin-top:1rem; }
+        .generate-btn:hover { transform:translateY(-2px); }
+        .output-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; } .output-header h3 { font-size:1.1rem; font-weight:700; }
+        .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .metric-card { background:#0f172a; border:1px solid #1e293b; border-radius:0.5rem; padding:1rem; text-align:center; }
+        .metric-card .value { font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,#fff,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .metric-card .label { color:#a1a1aa; font-size:0.8rem; margin-top:0.25rem; }
+        .keyword-list { list-style:none; } .keyword-list li { display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid #1e293b; color:#a1a1aa; font-size:0.9rem; }
+        .keyword-list li span:last-child { color:#818cf8; }
+        @media(max-width:768px) { .main-grid{grid-template-columns:1fr} .nav-links{display:none} .metric-grid{grid-template-columns:repeat(2,1fr)} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav"><a href="/" class="nav-logo"><div class="icon">⚡</div> WriteEngin</a><div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/tools/blog-writer">Blog</a><a href="/tools/social-media">Social</a><a href="/tools/seo" class="active">SEO</a><a href="/pricing">Pricing</a></div><div class="nav-actions"><div class="user-avatar">U</div></div></nav>
+    <div class="container">
+        <div class="page-header"><h1>SEO & Keyword Research</h1><p>Analyze keywords and track your search performance.</p></div>
+        <div class="main-grid">
+            <div class="form-card"><h3>Keyword Analysis</h3>
+                <div class="form-field"><label>Target Keyword *</label><input type="text" id="keyword" placeholder="e.g., AI content writer"></div>
+                <button class="generate-btn" onclick="analyzeSEO()">🔍 Analyze Keyword</button>
+            </div>
+            <div class="output-card"><div class="output-header"><h3>Analysis Results</h3></div>
+                <div id="resultsContainer"><div style="text-align:center;padding:4rem;color:#475569"><div style="font-size:3rem;margin-bottom:1rem">🔍</div><p>Enter a keyword to see analysis.</p></div></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function analyzeSEO() {
+            const keyword = document.getElementById('keyword').value;
+            if (!keyword) { alert('Please enter a keyword!'); return; }
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '<div style="text-align:center;padding:4rem"><div style="font-size:3rem;margin-bottom:1rem">⏳</div><p>Analyzing...</p></div>';
+            try {
+                const res = await fetch('/api/seo-analyze', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({keyword}) });
+                const data = await res.json();
+                if(data.success) {
+                    container.innerHTML = `<div class="metric-grid"><div class="metric-card"><div class="value">${data.search_volume.toLocaleString()}</div><div class="label">Search Volume</div></div><div class="metric-card"><div class="value">${data.difficulty}/100</div><div class="label">Difficulty</div></div><div class="metric-card"><div class="value">$${data.cpc}</div><div class="label">CPC</div></div></div><h4 style="margin:1rem 0 0.5rem">Related Keywords</h4><ul class="keyword-list">${data.related_keywords.map(k=>`<li><span>${k}</span><span style="color:#34d399">High</span></li>`).join('')}</ul>`;
+                }
+            } catch(e) { container.innerHTML = '<div style="text-align:center;padding:4rem;color:#ef4444"><p>Error analyzing.</p></div>'; }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WriteEngin — Landing Pages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; position:sticky; top:0; z-index:100; background:rgba(9,9,11,0.8); backdrop-filter:blur(12px); }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nav-links { display:flex; gap:2rem; } .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; } .nav-links a.active { color:#fafafa; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .container { max-width:1200px; margin:0 auto; padding:2rem; }
+        .page-header { margin-bottom:2rem; } .page-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; } .page-header p { color:#71717a; }
+        .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+        .form-card, .output-card { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:2rem; }
+        .form-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:1.5rem; }
+        .form-field { margin-bottom:1.25rem; } .form-field label { display:block; font-weight:600; font-size:0.85rem; color:#a1a1aa; margin-bottom:0.5rem; }
+        .form-field input, .form-field textarea, .form-field select { width:100%; padding:0.75rem 1rem; background:#0f172a; border:1px solid #1e293b; border-radius:0.5rem; color:#fafafa; font-size:0.95rem; outline:none; }
+        .form-field input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+        .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+        .generate-btn { width:100%; padding:1rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.75rem; font-weight:700; font-size:1.05rem; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 14px rgba(99,102,241,0.35); margin-top:1rem; }
+        .generate-btn:hover { transform:translateY(-2px); }
+        .output-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; } .output-header h3 { font-size:1.1rem; font-weight:700; }
+        .action-btn { padding:0.5rem 1rem; background:transparent; border:1px solid #334155; border-radius:0.5rem; color:#a1a1aa; font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
+        .action-btn:hover { border-color:#6366f1; color:#818cf8; }
+        .action-btn.primary { background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; }
+        .preview-frame { width:100%; height:500px; border:none; background:#fff; border-radius:0.5rem; }
+        @media(max-width:768px) { .main-grid{grid-template-columns:1fr} .nav-links{display:none} .features-grid{grid-template-columns:1fr} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav"><a href="/" class="nav-logo"><div class="icon">⚡</div> WriteEngin</a><div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/tools/blog-writer">Blog</a><a href="/tools/social-media">Social</a><a href="/tools/landing-pages" class="active">Pages</a><a href="/pricing">Pricing</a></div><div class="nav-actions"><div class="user-avatar">U</div></div></nav>
+    <div class="container">
+        <div class="page-header"><h1>Landing Page Generator</h1><p>Generate high-converting landing pages with bento grid layouts.</p></div>
+        <div class="main-grid">
+            <div class="form-card"><h3>Page Configuration</h3>
+                <div class="form-field"><label>Product Name *</label><input type="text" id="product" placeholder="e.g., TaskFlow AI"></div>
+                <div class="form-field"><label>Description *</label><textarea id="description" placeholder="What does your product do?"></textarea></div>
+                <div class="form-field"><label>Target Audience</label><input type="text" id="audience" placeholder="e.g., Remote teams"></div>
+                <div class="form-field"><label>Industry</label><select id="industry"><option>SaaS / Software</option><option>AI / ML</option><option>E-Commerce</option><option>FinTech</option><option>Health & Fitness</option></select></div>
+                <div class="form-field"><label>Primary CTA</label><select id="cta_goal"><option>Free Trial</option><option>Email Signup</option><option>Book Demo</option><option>Buy Now</option></select></div>
+                <div class="form-field"><label>Accent Color</label><input type="color" id="accent_color" value="#6366f1" style="height:40px;padding:2px;"></div>
+                <h4 style="margin:1rem 0 0.5rem;font-size:0.9rem">Key Features</h4>
+                <div class="features-grid">
+                    <div class="form-field"><input type="text" id="feat1" placeholder="Feature 1"></div>
+                    <div class="form-field"><input type="text" id="feat2" placeholder="Feature 2"></div>
+                    <div class="form-field"><input type="text" id="feat3" placeholder="Feature 3"></div>
+                </div>
+                <button class="generate-btn" onclick="generateLanding()">🚀 Generate Landing Page</button>
+            </div>
+            <div class="output-card"><div class="output-header"><h3>Live Preview</h3><div style="display:flex;gap:0.5rem"><button class="action-btn" onclick="copyHTML()">📋 Copy</button><button class="action-btn primary" onclick="downloadHTML()">⬇️ Download</button></div></div>
+                <div id="previewContainer"><div style="text-align:center;padding:4rem;color:#475569"><div style="font-size:3rem;margin-bottom:1rem">🚀</div><p>Configure your product and click generate.</p></div></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function generateLanding() {
+            const product = document.getElementById('product').value;
+            const description = document.getElementById('description').value;
+            if (!product || !description) { alert('Please fill in product name and description!'); return; }
+            const features = [document.getElementById('feat1').value, document.getElementById('feat2').value, document.getElementById('feat3').value];
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = '<div style="text-align:center;padding:4rem"><div style="font-size:3rem;margin-bottom:1rem">⏳</div><p>Generating landing page...</p></div>';
+            try {
+                const res = await fetch('/api/generate-landing', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({product, description, audience:document.getElementById('audience').value, industry:document.getElementById('industry').value, cta_goal:document.getElementById('cta_goal').value, features, accent_color:document.getElementById('accent_color').value }) });
+                const data = await res.json();
+                if(data.success) { container.innerHTML = `<iframe class="preview-frame" srcdoc="${data.html.replace(/"/g,'&quot;')}"></iframe>`; window.generatedHTML = data.html; }
+            } catch(e) { container.innerHTML = '<div style="text-align:center;padding:4rem;color:#ef4444"><p>Error generating.</p></div>'; }
+        }
+        function copyHTML() { if(window.generatedHTML) { navigator.clipboard.writeText(window.generatedHTML); alert('HTML copied!'); } }
+        function downloadHTML() { if(window.generatedHTML) { const blob = new Blob([window.generatedHTML],{type:'text/html'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (document.getElementById('product').value||'landing') + '.html'; a.click(); } }
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WriteEngin — Content Calendar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; position:sticky; top:0; z-index:100; background:rgba(9,9,11,0.8); backdrop-filter:blur(12px); }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nav-links { display:flex; gap:2rem; } .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; } .nav-links a.active { color:#fafafa; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .container { max-width:1200px; margin:0 auto; padding:2rem; }
+        .page-header { margin-bottom:2rem; } .page-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; } .page-header p { color:#71717a; }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0.5rem; }
+        .calendar-header { text-align:center; padding:0.75rem; color:#a1a1aa; font-size:0.85rem; font-weight:600; }
+        .calendar-day { background:#11181b; border:1px solid #1e293b; border-radius:0.5rem; min-height:100px; padding:0.5rem; transition:all 0.2s; }
+        .calendar-day:hover { border-color:#6366f1; }
+        .calendar-day .date { color:#a1a1aa; font-size:0.8rem; margin-bottom:0.5rem; }
+        .calendar-day .post { background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:0.25rem; padding:0.25rem 0.5rem; margin-bottom:0.25rem; font-size:0.7rem; color:#818cf8; cursor:pointer; }
+        .calendar-day .post.twitter { background:rgba(29,161,242,0.1); border-color:rgba(29,161,242,0.2); color:#1da1f2; }
+        .calendar-day .post.instagram { background:rgba(225,48,108,0.1); border-color:rgba(225,48,108,0.2); color:#e1306c; }
+        .calendar-day .post.linkedin { background:rgba(0,119,181,0.1); border-color:rgba(0,119,181,0.2); color:#0077b5; }
+        .today { border-color:#6366f1 !important; background:rgba(99,102,241,0.05) !important; }
+        @media(max-width:768px) { .calendar-grid{grid-template-columns:repeat(7,1fr);gap:0.25rem} .calendar-day{min-height:60px;padding:0.25rem} .calendar-day .post{font-size:0.6rem} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav"><a href="/" class="nav-logo"><div class="icon">⚡</div> WriteEngin</a><div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/content-calendar" class="active">Calendar</a><a href="/analytics">Analytics</a><a href="/pricing">Pricing</a></div><div class="nav-actions"><div class="user-avatar">U</div></div></nav>
+    <div class="container">
+        <div class="page-header"><h1>Content Calendar</h1><p>Plan and schedule your content across all platforms.</p></div>
+        <div class="calendar-grid">
+            <div class="calendar-header">Sun</div><div class="calendar-header">Mon</div><div class="calendar-header">Tue</div><div class="calendar-header">Wed</div><div class="calendar-header">Thu</div><div class="calendar-header">Fri</div><div class="calendar-header">Sat</div>
+            <div class="calendar-day"><div class="date">1</div></div>
+            <div class="calendar-day"><div class="date">2</div><div class="post twitter">Twitter Post</div></div>
+            <div class="calendar-day"><div class="date">3</div></div>
+            <div class="calendar-day"><div class="date">4</div><div class="post instagram">Instagram Reel</div></div>
+            <div class="calendar-day"><div class="date">5</div></div>
+            <div class="calendar-day"><div class="date">6</div><div class="post linkedin">LinkedIn Article</div></div>
+            <div class="calendar-day"><div class="date">7</div></div>
+            <div class="calendar-day"><div class="date">8</div></div>
+            <div class="calendar-day"><div class="date">9</div><div class="post twitter">Twitter Thread</div></div>
+            <div class="calendar-day"><div class="date">10</div></div>
+            <div class="calendar-day"><div class="date">11</div><div class="post instagram">Instagram Story</div></div>
+            <div class="calendar-day"><div class="date">12</div></div>
+            <div class="calendar-day"><div class="date">13</div><div class="post linkedin">LinkedIn Post</div></div>
+            <div class="calendar-day"><div class="date">14</div></div>
+            <div class="calendar-day today"><div class="date">15</div><div class="post twitter">Scheduled</div></div>
+            <div class="calendar-day"><div class="date">16</div></div>
+            <div class="calendar-day"><div class="date">17</div><div class="post instagram">Carousel</div></div>
+            <div class="calendar-day"><div class="date">18</div></div>
+            <div class="calendar-day"><div class="date">19</div></div>
+            <div class="calendar-day"><div class="date">20</div><div class="post linkedin">Newsletter</div></div>
+            <div class="calendar-day"><div class="date">21</div></div>
+        </div>
+    </div>
+</body>
+</html>

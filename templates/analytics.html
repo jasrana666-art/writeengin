@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WriteEngin — Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; position:sticky; top:0; z-index:100; background:rgba(9,9,11,0.8); backdrop-filter:blur(12px); }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nav-links { display:flex; gap:2rem; } .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; } .nav-links a.active { color:#fafafa; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .container { max-width:1200px; margin:0 auto; padding:2rem; }
+        .page-header { margin-bottom:2rem; } .page-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; } .page-header p { color:#71717a; }
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2.5rem; }
+        .stat-card { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; transition:all 0.3s; }
+        .stat-card:hover { border-color:#6366f1; transform:translateY(-2px); }
+        .stat-card .label { color:#a1a1aa; font-size:0.85rem; font-weight:500; margin-bottom:0.5rem; }
+        .stat-card .value { font-size:2rem; font-weight:800; background:linear-gradient(135deg,#fff,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .stat-card .change { color:#34d399; font-size:0.8rem; margin-top:0.25rem; }
+        .stat-card .change.negative { color:#ef4444; }
+        .chart-card { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:2rem; margin-bottom:2rem; }
+        .chart-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:1.5rem; }
+        .chart-placeholder { height:200px; background:linear-gradient(135deg,#0f172a,#1e293b); border-radius:0.5rem; display:flex; align-items:center; justify-content:center; color:#475569; font-size:1.2rem; }
+        .top-content { list-style:none; }
+        .top-content li { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #1e293b; }
+        .top-content li:last-child { border-bottom:none; }
+        .top-content .title { color:#fafafa; font-weight:500; }
+        .top-content .meta { color:#a1a1aa; font-size:0.85rem; }
+        .top-content .views { color:#818cf8; font-weight:600; }
+        @media(max-width:768px) { .stats-grid{grid-template-columns:repeat(2,1fr)} .nav-links{display:none} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav"><a href="/" class="nav-logo"><div class="icon">⚡</div> WriteEngin</a><div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/analytics" class="active">Analytics</a><a href="/content-calendar">Calendar</a><a href="/pricing">Pricing</a></div><div class="nav-actions"><div class="user-avatar">U</div></div></nav>
+    <div class="container">
+        <div class="page-header"><h1>Analytics Dashboard</h1><p>Track your content performance and ROI.</p></div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="label">Total Views</div><div class="value">248K</div><div class="change">↑ 34% this month</div></div>
+            <div class="stat-card"><div class="label">Engagement Rate</div><div class="value">8.4%</div><div class="change">↑ 12% improvement</div></div>
+            <div class="stat-card"><div class="label">Conversions</div><div class="value">3,247</div><div class="change">↑ 28% this month</div></div>
+            <div class="stat-card"><div class="label">Revenue</div><div class="value">$48K</div><div class="change">↑ 45% this quarter</div></div>
+        </div>
+        <div class="chart-card"><h3>📈 Traffic Overview (Last 30 Days)</h3><div class="chart-placeholder">📊 Chart visualization would appear here</div></div>
+        <div class="chart-card"><h3>🏆 Top Performing Content</h3>
+            <ul class="top-content">
+                <li><div><div class="title">The Complete Guide to AI Content Creation</div><div class="meta">Blog Post • Published Sep 12</div></div><div class="views">45.2K views</div></li>
+                <li><div><div class="title">10x Your Social Media Engagement</div><div class="meta">Twitter Thread • Published Sep 8</div></div><div class="views">32.1K views</div></li>
+                <li><div><div class="title">SEO Strategy for 2026</div><div class="meta">LinkedIn Article • Published Sep 5</div></div><div class="views">28.7K views</div></li>
+                <li><div><div class="title">Content Marketing Playbook</div><div class="meta">Blog Post • Published Sep 1</div></div><div class="views">21.3K views</div></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

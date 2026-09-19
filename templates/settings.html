@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WriteEngin — Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; position:sticky; top:0; z-index:100; background:rgba(9,9,11,0.8); backdrop-filter:blur(12px); }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .nav-links { display:flex; gap:2rem; } .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; } .nav-links a.active { color:#fafafa; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .container { max-width:800px; margin:0 auto; padding:2rem; }
+        .page-header { margin-bottom:2rem; } .page-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; } .page-header p { color:#71717a; }
+        .settings-card { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:2rem; margin-bottom:1.5rem; }
+        .settings-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+        .settings-card p { color:#a1a1aa; font-size:0.9rem; margin-bottom:1.5rem; }
+        .form-field { margin-bottom:1.25rem; } .form-field label { display:block; font-weight:600; font-size:0.85rem; color:#a1a1aa; margin-bottom:0.5rem; }
+        .form-field input { width:100%; padding:0.75rem 1rem; background:#0f172a; border:1px solid #1e293b; border-radius:0.5rem; color:#fafafa; font-size:0.95rem; outline:none; }
+        .form-field input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+        .save-btn { padding:0.75rem 2rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.5rem; font-weight:700; cursor:pointer; transition:all 0.3s; }
+        .save-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.4); }
+        .test-btn { padding:0.5rem 1rem; background:transparent; border:1px solid #334155; border-radius:0.5rem; color:#a1a1aa; font-size:0.85rem; cursor:pointer; transition:all 0.2s; margin-left:0.5rem; }
+        .test-btn:hover { border-color:#6366f1; color:#818cf8; }
+        @media(max-width:768px) { .nav-links{display:none} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav"><a href="/" class="nav-logo"><div class="icon">⚡</div> WriteEngin</a><div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/settings" class="active">Settings</a><a href="/pricing">Pricing</a></div><div class="nav-actions"><div class="user-avatar">U</div></div></nav>
+    <div class="container">
+        <div class="page-header"><h1>Settings</h1><p>Configure your integrations and preferences.</p></div>
+        <div class="settings-card"><h3>🔗 WordPress Integration</h3><p>Connect your WordPress site to publish content directly.</p>
+            <form method="POST"><div class="form-field"><label>WordPress URL</label><input type="text" name="wp_url" placeholder="https://your-site.com"></div><div class="form-field"><label>Username</label><input type="text" name="wp_username" placeholder="admin"></div><div class="form-field"><label>Application Password</label><input type="password" name="wp_password" placeholder="xxxx-xxxx-xxxx-xxxx"></div><button type="submit" class="save-btn">Save WordPress Settings</button></form>
+        </div>
+        <div class="settings-card"><h3>🤖 AI Settings</h3><p>AI automatically uses available providers (OpenAI, Claude, Gemini) with free fallback.</p><p style="margin-top:0.5rem;color:#818cf8">Status: <span id="aiStatus">Checking...</span></p></div>
+    </div>
+    <script>fetch('/health').then(r=>r.json()).then(d=>{document.getElementById('aiStatus').textContent = 'Connected ✓'}).catch(()=>{document.getElementById('aiStatus').textContent = 'Demo mode'});</script>
+</body>
+</html>

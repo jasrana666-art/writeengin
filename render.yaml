@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: WriteEngin
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        value: writeengin-production-key-2026
+      - key: FLASK_DEBUG
+        value: false
+    healthCheckPath: /health
