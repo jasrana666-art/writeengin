@@ -32,27 +32,14 @@
         <div class="page-header"><h1>Content Calendar</h1><p>Plan and schedule your content across all platforms.</p></div>
         <div class="calendar-grid">
             <div class="calendar-header">Sun</div><div class="calendar-header">Mon</div><div class="calendar-header">Tue</div><div class="calendar-header">Wed</div><div class="calendar-header">Thu</div><div class="calendar-header">Fri</div><div class="calendar-header">Sat</div>
-            <div class="calendar-day"><div class="date">1</div></div>
-            <div class="calendar-day"><div class="date">2</div><div class="post twitter">Twitter Post</div></div>
-            <div class="calendar-day"><div class="date">3</div></div>
-            <div class="calendar-day"><div class="date">4</div><div class="post instagram">Instagram Reel</div></div>
-            <div class="calendar-day"><div class="date">5</div></div>
-            <div class="calendar-day"><div class="date">6</div><div class="post linkedin">LinkedIn Article</div></div>
-            <div class="calendar-day"><div class="date">7</div></div>
-            <div class="calendar-day"><div class="date">8</div></div>
-            <div class="calendar-day"><div class="date">9</div><div class="post twitter">Twitter Thread</div></div>
-            <div class="calendar-day"><div class="date">10</div></div>
-            <div class="calendar-day"><div class="date">11</div><div class="post instagram">Instagram Story</div></div>
-            <div class="calendar-day"><div class="date">12</div></div>
-            <div class="calendar-day"><div class="date">13</div><div class="post linkedin">LinkedIn Post</div></div>
-            <div class="calendar-day"><div class="date">14</div></div>
-            <div class="calendar-day today"><div class="date">15</div><div class="post twitter">Scheduled</div></div>
-            <div class="calendar-day"><div class="date">16</div></div>
-            <div class="calendar-day"><div class="date">17</div><div class="post instagram">Carousel</div></div>
-            <div class="calendar-day"><div class="date">18</div></div>
-            <div class="calendar-day"><div class="date">19</div></div>
-            <div class="calendar-day"><div class="date">20</div><div class="post linkedin">Newsletter</div></div>
-            <div class="calendar-day"><div class="date">21</div></div>
+            {% for post in scheduled_posts %}
+            <div class="calendar-day">
+                <div class="date">{{ post.scheduled_time.strftime('%d') }}</div>
+                <div class="post {{ post.platform }}">{{ post.platform|title }}: {{ post.content_text[:30] }}...</div>
+            </div>
+            {% else %}
+            <div class="calendar-day"><div class="date">—</div><div style="color:#475569;font-size:0.75rem;text-align:center;margin-top:2rem">No scheduled posts</div></div>
+            {% endfor %}
         </div>
     </div>
 </body>

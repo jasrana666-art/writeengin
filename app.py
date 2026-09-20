@@ -71,6 +71,15 @@ class ScheduledPost(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class AnalyticsEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_type = db.Column(db.String(50))  # view, engagement, conversion
+    content_id = db.Column(db.Integer, db.ForeignKey('content.id'))
+    platform = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 with app.app_context():
     db.create_all()
 
@@ -246,16 +255,54 @@ def generate_seo_data(keyword):
 
 class EmailAutomation:
     @staticmethod
+    def send_email(to_email, subject, body, html_body=None):
+        """Send email via SMTP"""
+        smtp_server = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('MAIL_PORT', 587))
+        smtp_user = os.environ.get('MAIL_USERNAME')
+        smtp_password = os.environ.get('MAIL_PASSWORD')
+        sender = os.environ.get('MAIL_DEFAULT_SENDER', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            return {'success': False, 'message': 'Email not configured (demo mode)'}
+
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = sender
+            msg['To'] = to_email
+
+            msg.attach(MIMEText(body, 'plain'))
+            if html_body:
+                msg.attach(MIMEText(html_body, 'html'))
+
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.send_message(msg)
+
+            return {'success': True, 'message': 'Email sent successfully'}
+        except Exception as e:
+            return {'success': False, 'message': str(e)}
+
+    @staticmethod
     def send_welcome_email(user_email, user_name):
-        return {'success': True, 'message': 'Welcome email queued (demo mode)'}
+        subject = "Welcome to WriteEngin! 🚀"
+        body = f"Hi {user_name},\n\nWelcome to WriteEngin! Your account is ready.\n\nStart creating amazing content today.\n\n— The WriteEngin Team"
+        html_body = f"<h1>Welcome to WriteEngin!</h1><p>Hi {user_name},</p><p>Your account is ready. Start creating amazing content today.</p><p><a href='https://writeengin.com/dashboard'>Go to Dashboard</a></p>"
+        return EmailAutomation.send_email(user_email, subject, body, html_body)
 
     @staticmethod
     def send_credits_reminder(user_email, credits_left):
-        return {'success': True, 'message': 'Credits reminder queued'}
+        subject = "Credits Running Low — WriteEngin"
+        body = f"You have {credits_left} credits remaining. Upgrade to Pro for unlimited credits."
+        return EmailAutomation.send_email(user_email, subject, body)
 
     @staticmethod
     def send_weekly_report(user_email, stats):
-        return {'success': True, 'message': 'Weekly report queued'}
+        subject = "Your Weekly WriteEngin Report 📊"
+        body = f"Weekly Stats:\n- Content created: {stats.get('content_created', 0)}\n- Total views: {stats.get('total_views', 0)}\n- Engagement rate: {stats.get('engagement_rate', 0)}%"
+        return EmailAutomation.send_email(user_email, subject, body)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -375,7 +422,17 @@ def pricing():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    # Get real stats from database
+    total_content = Content.query.filter_by(user_id=current_user.id).count()
+    total_posts = ScheduledPost.query.filter_by(user_id=current_user.id).count()
+    recent_content = Content.query.filter_by(user_id=current_user.id).order_by(Content.created_at.desc()).limit(5).all()
+    
+    return render_template('dashboard.html', 
+                         total_content=total_content,
+                         total_posts=total_posts,
+                         recent_content=recent_content,
+                         credits=current_user.credits,
+                         plan=current_user.plan)
 
 @app.route('/tools/blog-writer')
 @login_required
@@ -405,12 +462,28 @@ def landing_pages():
 @app.route('/content-calendar')
 @login_required
 def content_calendar():
-    return render_template('content-calendar.html')
+    # Get scheduled posts from database
+    scheduled = ScheduledPost.query.filter_by(user_id=current_user.id, is_posted=False).order_by(ScheduledPost.scheduled_time).all()
+    return render_template('content-calendar.html', scheduled_posts=scheduled)
 
 @app.route('/analytics')
 @login_required
 def analytics():
-    return render_template('analytics.html')
+    # Get real analytics from database
+    total_content = Content.query.filter_by(user_id=current_user.id).count()
+    total_events = AnalyticsEvent.query.filter_by(user_id=current_user.id).count()
+    views = AnalyticsEvent.query.filter_by(user_id=current_user.id, event_type='view').count()
+    engagements = AnalyticsEvent.query.filter_by(user_id=current_user.id, event_type='engagement').count()
+    
+    # Get top content
+    top_content = Content.query.filter_by(user_id=current_user.id).order_by(Content.created_at.desc()).limit(5).all()
+    
+    return render_template('analytics.html',
+                         total_content=total_content,
+                         total_events=total_events,
+                         views=views,
+                         engagements=engagements,
+                         top_content=top_content)
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -506,6 +579,23 @@ def api_send_email():
     data = request.json
     result = EmailAutomation.send_welcome_email(data.get('to', current_user.email), current_user.name or 'User')
     return jsonify(result)
+
+
+@app.route('/api/track-event', methods=['POST'])
+@login_required
+def api_track_event():
+    """Track analytics events"""
+    data = request.json
+    event = AnalyticsEvent(
+        user_id=current_user.id,
+        event_type=data.get('event_type', 'view'),
+        content_id=data.get('content_id'),
+        platform=data.get('platform')
+    )
+    db.session.add(event)
+    db.session.commit()
+    return jsonify({'success': True})
+
 
 @app.route('/health')
 def health_check():

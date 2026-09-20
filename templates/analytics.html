@@ -37,18 +37,19 @@
     <div class="container">
         <div class="page-header"><h1>Analytics Dashboard</h1><p>Track your content performance and ROI.</p></div>
         <div class="stats-grid">
-            <div class="stat-card"><div class="label">Total Views</div><div class="value">248K</div><div class="change">↑ 34% this month</div></div>
-            <div class="stat-card"><div class="label">Engagement Rate</div><div class="value">8.4%</div><div class="change">↑ 12% improvement</div></div>
-            <div class="stat-card"><div class="label">Conversions</div><div class="value">3,247</div><div class="change">↑ 28% this month</div></div>
-            <div class="stat-card"><div class="label">Revenue</div><div class="value">$48K</div><div class="change">↑ 45% this quarter</div></div>
+            <div class="stat-card"><div class="label">Total Views</div><div class="value">{{ views }}</div><div class="change">↑ {{ engagements }} engagements</div></div>
+            <div class="stat-card"><div class="label">Engagement Rate</div><div class="value">{{ engagements }}</div><div class="change">↑ {{ total_events }} total events</div></div>
+            <div class="stat-card"><div class="label">Content Items</div><div class="value">{{ total_content }}</div><div class="change">↑ {{ total_events }} events tracked</div></div>
+            <div class="stat-card"><div class="label">Total Events</div><div class="value">{{ total_events }}</div><div class="change">All time</div></div>
         </div>
         <div class="chart-card"><h3>📈 Traffic Overview (Last 30 Days)</h3><div class="chart-placeholder">📊 Chart visualization would appear here</div></div>
         <div class="chart-card"><h3>🏆 Top Performing Content</h3>
             <ul class="top-content">
-                <li><div><div class="title">The Complete Guide to AI Content Creation</div><div class="meta">Blog Post • Published Sep 12</div></div><div class="views">45.2K views</div></li>
-                <li><div><div class="title">10x Your Social Media Engagement</div><div class="meta">Twitter Thread • Published Sep 8</div></div><div class="views">32.1K views</div></li>
-                <li><div><div class="title">SEO Strategy for 2026</div><div class="meta">LinkedIn Article • Published Sep 5</div></div><div class="views">28.7K views</div></li>
-                <li><div><div class="title">Content Marketing Playbook</div><div class="meta">Blog Post • Published Sep 1</div></div><div class="views">21.3K views</div></li>
+                {% for content in top_content %}
+                <li><div><div class="title">{{ content.title }}</div><div class="meta">{{ content.type|title }} • {{ content.created_at.strftime('%b %d, %Y') }}</div></div><div class="views">{{ content.id }} views</div></li>
+                {% else %}
+                <li><div><div class="title">No content yet</div><div class="meta">Start creating to see analytics</div></div><div class="views">—</div></li>
+                {% endfor %}
             </ul>
         </div>
     </div>

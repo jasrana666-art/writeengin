@@ -71,10 +71,10 @@
                 <p>Here's your content performance overview.</p>
             </div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="label">Total Content</div><div class="value">247</div><div class="change">↑ 12% this month</div></div>
-                <div class="stat-card"><div class="label">Avg. SEO Score</div><div class="value">94</div><div class="change">↑ 5% improvement</div></div>
-                <div class="stat-card"><div class="label">Social Posts</div><div class="value">156</div><div class="change">↑ 23% engagement</div></div>
-                <div class="stat-card"><div class="label">Word Count</div><div class="value">48K</div><div class="change">↑ 8K this week</div></div>
+                <div class="stat-card"><div class="label">Total Content</div><div class="value">{{ total_content }}</div><div class="change">↑ {{ total_posts }} scheduled</div></div>
+                <div class="stat-card"><div class="label">Plan</div><div class="value">{{ plan }}</div><div class="change">{{ credits }} credits left</div></div>
+                <div class="stat-card"><div class="label">Recent Posts</div><div class="value">{{ recent_content|length }}</div><div class="change">Last 5 items</div></div>
+                <div class="stat-card"><div class="label">Member Since</div><div class="value">{{ current_user.created_at.strftime('%b %Y') }}</div><div class="change">Active account</div></div>
             </div>
             <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:1.5rem">AI Tools</h2>
             <div class="tools-grid">
