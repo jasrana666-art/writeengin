@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lima AI — Clean AI Tools Landing (Built for Reels + Content)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Grotesk:wght@300;500;700&display=swap');
+  :root{--bg:#06060a;--surface:#0e0e14;--card:#12121a;--text:#f4f4f8;--muted:#8e8e9a;--accent:#c4a84d;--accent-glow:rgba(196,168,77,0.25);--border:rgba(255,255,255,0.06);}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;overflow-x:hidden;}
+  h1,h2,h3{font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:-0.03em;line-height:1.1;}
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 6vw 80px;overflow:hidden;}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(196,168,77,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  .hero .label{display:inline-flex;align-items:center;gap:10px;font-size:12px;text-transform:uppercase;letter-spacing:0.18em;color:var(--muted);font-weight:600;margin-bottom:28px;z-index:1;position:relative;}
+  .hero .label .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent-glow);animation:pulse 2.5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(1.15);}}
+  .hero h1{font-size:clamp(48px,8vw,110px);font-weight:900;color:var(--text);z-index:1;position:relative;max-width:900px;}
+  .hero h1 .accent{color:var(--accent);text-shadow:0 0 60px var(--accent-glow);}
+  .hero p.subtitle{font-size:20px;color:var(--muted);max-width:520px;margin-top:24px;z-index:1;position:relative;}
+  .btn{display:inline-flex;align-items:center;gap:10px;margin-top:40px;padding:16px 32px;border-radius:999px;background:linear-gradient(135deg,var(--accent),#a68b3a);color:#0a0a0e;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 20px 50px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.15);transition:transform .2s ease,box-shadow .2s ease;z-index:1;position:relative;}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 30px 70px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.2);}
+
+  /* Features */
+  .section{padding:100px 6vw;max-width:1200px;margin:0 auto;}
+  .section h2{font-size:clamp(32px,5vw,56px);font-weight:700;margin-bottom:16px;}
+  .section .sub{color:var(--muted);font-size:18px;max-width:540px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:60px;}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid var(--border);border-radius:24px;padding:32px 28px;position:relative;overflow:hidden;transition:transform .25s ease,border-color .3s ease;}
+  .card:hover{transform:translateY(-6px);border-color:rgba(196,168,77,0.35);}
+  .card .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:700;margin-bottom:14px;}
+  .card h3{font-size:22px;font-weight:700;margin-bottom:10px;}
+  .card p{color:var(--muted);font-size:15px;line-height:1.55;}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),#6366f1);opacity:0.9;}
+
+  /* Footer */
+  footer{border-top:1px solid var(--border);padding:60px 6vw;max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;color:var(--muted);font-size:14px;}
+  footer a{color:var(--accent);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+<section class="hero" aria-label="Hero">
+  <div class="label"><span class="dot"></span> NIMBDU AI Tools — Dribbble Inspired</div>
+  <h1>Clean AI SaaS<br><span class="accent">Built for Reels + Content</span></h1>
+  <p class="subtitle">Modern vertical video pipeline + professional landing page. Free tools only. Designed with inspiration from Dribbble's best "Tools" designs.</p>
+  <a class="btn" href="final_video_reels.mp4" aria-label="Watch the 30-second AI Tools video">▶ Watch 30s Reel</a>
+</section>
+
+<section class="section" aria-label="Features">
+  <h2>What the build delivers</h2>
+  <p class="sub">A complete zero-cost pipeline: Hindi voiceover (Edge TTS), 9:16 vertical video (FFmpeg), professional dark landing (inspired by Dribbble "Lima" AI SaaS design).</p>
+  <div class="grid">
+    <article class="card">
+      <div class="tag">01 — VIDEO</div>
+      <h3>30s Instagram Reel</h3>
+      <p>Vertical 540×960 MP4 with Hindi/Hinglish script, Edge TTS voice, and animated text cards. No subscription.</p>
+    </article>
+    <article class="card">
+      <div class="tag">02 — DESIGN</div>
+      <h3>Dribbble-Inspired Landing</h3>
+      <p>Clean AI SaaS layout inspired by "Lima" shot — dark gradient, glassmorphism cards, gold accent, feature grid.</p>
+    </article>
+    <article class="card">
+      <div class="tag">03 — DEPLOY</div>
+      <h3>Ready to Ship</h3>
+      <p>Free tier deployment (Render/Vercel/GitHub Pages). Zero-cost stack: Python pipeline + HTML widget + MP4 artifact.</p>
+    </article>
+  </div>
+</section>
+
+<footer>
+  <span>Built by NIMBDU — Maximum-effort, zero-waste</span>
+  <a href="#" onclick="alert('Video file: final_video_reels.mp4\nHTML widget: reels_hindi_ai_9x16.html');return false;">Download Deliverables</a>
+</footer>
+</body>
+</html>

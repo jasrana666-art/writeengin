@@ -609,6 +609,18 @@ def health_check():
     return jsonify({'status': 'ok', 'timestamp': datetime.utcnow().isoformat()})
 
 
+@app.route('/lima')
+@app.route('/landing')
+def serve_landing_page():
+    """Serve the Lima AI landing page"""
+    return send_file('lima_ai_landing.html')
+
+@app.route('/tools/landing')
+def serve_landing():
+    """Serve the Lima AI landing page"""
+    return send_file('lima_ai_landing.html')
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # RUN
 # ══════════════════════════════════════════════════════════════════════════════
