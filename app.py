@@ -613,12 +613,14 @@ def health_check():
 @app.route('/landing')
 def serve_landing_page():
     """Serve the Lima AI landing page"""
-    return send_file('lima_ai_landing.html')
+    import os
+    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lima_ai_landing.html'))
 
 @app.route('/tools/landing')
 def serve_landing():
     """Serve the Lima AI landing page"""
-    return send_file('lima_ai_landing.html')
+    import os
+    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lima_ai_landing.html'))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
