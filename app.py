@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-i
 
 # Database: Auto-detect PostgreSQL from Railway or DATABASE_URL
 import sys as _sys
-_database_url = os.environ.get('DATABASE_URL')
+_database_url = os.environ.get('DATABASE_URL') or os.environ.get('SUPABASE_URL')
 _pg_host = os.environ.get('PGHOST')
 _database_source = None
 
