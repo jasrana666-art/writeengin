@@ -27,7 +27,8 @@ if not database_url:
     pg_password = os.environ.get('PGPASSWORD', '')
     pg_database = os.environ.get('PGDATABASE', 'railway')
     if pg_host:
-        database_url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
+        from urllib.parse import quote_plus
+        database_url = f"postgresql://{pg_user}:{quote_plus(pg_password)}@{pg_host}:{pg_port}/{pg_database}"
 
 if database_url:
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
