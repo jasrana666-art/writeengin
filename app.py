@@ -18,21 +18,40 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 # Database: Auto-detect PostgreSQL from Railway or DATABASE_URL
-database_url = os.environ.get('DATABASE_URL')
-# Railway injects PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE
-if not database_url:
-    pg_host = os.environ.get('PGHOST')
-    pg_port = os.environ.get('PGPORT', '5432')
-    pg_user = os.environ.get('PGUSER', 'postgres')
-    pg_password = os.environ.get('PGPASSWORD', '')
-    pg_database = os.environ.get('PGDATABASE', 'railway')
-    if pg_host:
-        from urllib.parse import quote_plus
-        database_url = f"postgresql://{pg_user}:{quote_plus(pg_password)}@{pg_host}:{pg_port}/{pg_database}"
+import sys as _sys
+_database_url = os.environ.get('DATABASE_URL')
+_pg_host = os.environ.get('PGHOST')
+_database_source = None
 
-if database_url:
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    print(f"Using database: PostgreSQL")
+if _database_url:
+    # Fix postgres:// prefix (Railway uses it, SQLAlchemy needs postgresql://)
+    if _database_url.startswith('postgres://'):
+        _database_url = 'postgresql://' + _database_url[len('postgres://'):]
+    # Ensure password is URL-encoded
+    try:
+        from urllib.parse import quote_plus, urlparse, urlunparse
+        _parsed = urlparse(_database_url)
+        if _parsed.password:
+            _safe_pw = quote_plus(_parsed.password)
+            _netloc = f"{_parsed.username}:{_safe_pw}@{_parsed.hostname}"
+            if _parsed.port:
+                _netloc += f":{_parsed.port}"
+            _database_url = urlunparse((_parsed.scheme, _netloc, _parsed.path, _parsed.params, _parsed.query, _parsed.fragment))
+        _database_source = "DATABASE_URL"
+    except Exception as _e:
+        print(f"WARNING: Failed to parse DATABASE_URL: {_e}")
+elif _pg_host:
+    _pg_port = os.environ.get('PGPORT', '5432')
+    _pg_user = os.environ.get('PGUSER', 'postgres')
+    _pg_password = os.environ.get('PGPASSWORD', '')
+    _pg_database = os.environ.get('PGDATABASE', 'railway')
+    from urllib.parse import quote_plus
+    _database_url = f"postgresql://{_pg_user}:{quote_plus(_pg_password)}@{_pg_host}:{_pg_port}/{_pg_database}"
+    _database_source = "PGHOST"
+
+if _database_url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = _database_url
+    print(f"Using database: PostgreSQL (source: {_database_source})")
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///writeengin.db'
     print("Using SQLite (local dev mode)")
