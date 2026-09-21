@@ -37,6 +37,13 @@ if _database_url:
             if _parsed.port:
                 _netloc += f":{_parsed.port}"
             _database_url = urlunparse((_parsed.scheme, _netloc, _parsed.path, _parsed.params, _parsed.query, _parsed.fragment))
+        # Add sslmode if not present
+        if 'sslmode' in _parsed.query:
+            pass  # Already present
+        elif _parsed.query:
+            _database_url += '&sslmode=require'
+        else:
+            _database_url += '?sslmode=require'
         _database_source = "DATABASE_URL"
     except Exception as _e:
         print(f"WARNING: Failed to parse DATABASE_URL: {_e}")
@@ -46,7 +53,7 @@ elif _pg_host:
     _pg_password = os.environ.get('PGPASSWORD', '')
     _pg_database = os.environ.get('PGDATABASE', 'railway')
     from urllib.parse import quote_plus
-    _database_url = f"postgresql://{_pg_user}:{quote_plus(_pg_password)}@{_pg_host}:{_pg_port}/{_pg_database}"
+    _database_url = f"postgresql://{_pg_user}:{quote_plus(_pg_password)}@{_pg_host}:{_pg_port}/{_pg_database}?sslmode=require"
     _database_source = "PGHOST"
 
 if _database_url:
@@ -120,7 +127,12 @@ class AnalyticsEvent(db.Model):
 
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+        print("Database tables created/verified")
+    except Exception as e:
+        print(f"WARNING: Could not create tables: {e}")
+        print("Tables may already exist or DB not ready yet")
 
 
 @login_manager.user_loader
