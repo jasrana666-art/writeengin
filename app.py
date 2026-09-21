@@ -17,21 +17,24 @@ import requests
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# Database: Use PostgreSQL if DATABASE_URL is set, otherwise fallback to SQLite
+# Database: Auto-detect PostgreSQL from Railway or DATABASE_URL
 database_url = os.environ.get('DATABASE_URL')
+# Railway injects PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE
+if not database_url:
+    pg_host = os.environ.get('PGHOST')
+    pg_port = os.environ.get('PGPORT', '5432')
+    pg_user = os.environ.get('PGUSER', 'postgres')
+    pg_password = os.environ.get('PGPASSWORD', '')
+    pg_database = os.environ.get('PGDATABASE', 'railway')
+    if pg_host:
+        database_url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
+
 if database_url:
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    print(f"Using database: PostgreSQL ({database_url.split('@')[1] if '@' in database_url else 'configured'})")
+    print(f"Using database: PostgreSQL")
 else:
-    # For production: require DATABASE_URL
-    # For local dev: allow SQLite
-    import sys
-    if os.environ.get('FLASK_ENV') == 'production' or os.environ.get('RENDER'):
-        print("ERROR: DATABASE_URL is not set. PostgreSQL is required for production.")
-        print("Set DATABASE_URL environment variable to your PostgreSQL connection string.")
-        sys.exit(1)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///writeengin.db'
-    print("WARNING: Using SQLite (local development mode). Set DATABASE_URL for production.")
+    print("Using SQLite (local dev mode)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
