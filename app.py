@@ -3,7 +3,7 @@ WriteEngin — Production-Ready AI Content Platform
 Complete with real AI integrations, email automation, WordPress, payments, and deployment.
 """
 
-from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from functools import wraps
@@ -430,6 +430,47 @@ class PaymentGateway:
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/robots.txt')
+def robots():
+    return Response(
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Allow: /pricing\n"
+        "Allow: /login\n"
+        "Allow: /register\n"
+        "Disallow: /dashboard\n"
+        "Disallow: /tools/\n"
+        "Disallow: /content-calendar\n"
+        "Disallow: /analytics\n"
+        "\n"
+        "Sitemap: https://writeengin-1.onrender.com/sitemap.xml\n",
+        mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    pages = [
+        ('/', '1.0', 'weekly'),
+        ('/pricing', '0.8', 'monthly'),
+        ('/login', '0.3', 'yearly'),
+        ('/register', '0.5', 'monthly'),
+    ]
+    from datetime import datetime, timedelta
+    lastmod = datetime.utcnow().strftime('%Y-%m-%d')
+    urls = []
+    for path, priority, freq in pages:
+        urls.append(
+            f"  <url>\n"
+            f"    <loc>https://writeengin-1.onrender.com{path}</loc>\n"
+            f"    <lastmod>{lastmod}</lastmod>\n"
+            f"    <changefreq>{freq}</changefreq>\n"
+            f"    <priority>{priority}</priority>\n"
+            f"  </url>"
+        )
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           + '\n'.join(urls) + '\n</urlset>')
+    return Response(xml, mimetype='application/xml')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
