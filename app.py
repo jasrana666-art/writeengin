@@ -13,6 +13,7 @@ import random
 import json
 import hashlib
 import requests
+import urllib.parse
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -347,6 +348,29 @@ def get_affiliate_programs():
         {'id': 'notion', 'name': 'Notion', 'commission': 'Varies', 'payout': 'Net 30', 'cookie': '30 days', 'niche': 'Productivity'},
         {'id': 'loom', 'name': 'Loom', 'commission': '25% recurring', 'payout': 'PayPal', 'cookie': '90 days', 'niche': 'Video messaging'}
     ]
+
+
+def generate_youtube_script(topic, tone, length, target_audience):
+    system = f"You are a professional YouTube scriptwriter for a tech tools channel. Tone: {tone}. Target audience: {target_audience}."
+    user = f"Write a complete YouTube video script about: {topic}. Include: hook (first 30 seconds), intro, 3 main sections with timestamps, outro with CTA. Target length: {length} min video."
+    script = ai_engine.generate(system, user, max_tokens=4000)
+    return {
+        'topic': topic, 'script': script,
+        'estimated_duration': f"{length} min", 'word_count': len(script.split()),
+        'hashtags': f"#{topic.replace(' ', '')} #TechTools #AI2026 #{topic.replace(' ', '').lower()}",
+        'title_suggestions': [f"{topic} - The Complete Guide 2026", f"I Tried {topic} For 30 Days", f"Nobody Talks About This {topic} Trick"]
+    }
+
+
+def generate_video_prompt(topic, style, duration):
+    system = "You are a creative video prompt engineer for AI video generation tools like ZSky AI."
+    user = f"Create a detailed AI video generation prompt for: {topic}. Style: {style}. Duration: {duration} seconds. Include visual descriptions, transitions, and mood."
+    prompt = ai_engine.generate(system, user, max_tokens=800)
+    return {
+        'topic': topic, 'prompt': prompt, 'style': style, 'duration': duration,
+        'zsky_url': f"https://zsky.ai/?prompt={urllib.parse.quote(prompt[:200])}",
+        'tips': "Copy the prompt to zsky.ai for free 1080p video generation. No API key needed."
+    }
 
 # EMAIL AUTOMATION
 # ══════════════════════════════════════════════════════════════════════════════
