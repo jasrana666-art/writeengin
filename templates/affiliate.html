@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Link Manager — gennim.ai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; background:#09090b; position:sticky; top:0; z-index:100; }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+        .main-layout { display:flex; min-height:calc(100vh - 65px); }
+        .sidebar { width:240px; padding:1.5rem 1rem; border-right:1px solid #1a1a1c; background:#0c0c0e; }
+        .sidebar-link { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; color:#a1a1aa; text-decoration:none; border-radius:0.5rem; font-size:0.9rem; margin-bottom:0.25rem; cursor:pointer; }
+        .sidebar-link:hover { background:#18181b; color:#fafafa; }
+        .sidebar-link.active { background:rgba(99,102,241,0.1); color:#818cf8; }
+        .main-content { flex:1; padding:2rem; max-width:1200px; }
+        .tool-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; }
+        .tool-header p { color:#a1a1aa; margin-bottom:2rem; }
+        .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+        .stat-card { background:#11181b; border:1px solid #1e293b; border-radius:0.75rem; padding:1rem; text-align:center; }
+        .stat-card .value { font-size:1.5rem; font-weight:800; color:#818cf8; }
+        .stat-card .label { color:#a1a1aa; font-size:0.8rem; margin-top:0.25rem; }
+        .form-group { margin-bottom:1.5rem; }
+        .form-group label { display:block; font-weight:600; margin-bottom:0.5rem; color:#e8eaed; font-size:0.9rem; }
+        .form-group input, .form-group select { width:100%; padding:0.75rem 1rem; background:#18181b; border:1px solid #27272a; border-radius:0.5rem; color:#fafafa; font-size:0.95rem; }
+        .form-group input:focus, .form-group select:focus { outline:none; border-color:#6366f1; }
+        .add-btn { padding:0.75rem 1.5rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.5rem; font-weight:700; cursor:pointer; }
+        table { width:100%; border-collapse:collapse; margin-top:1.5rem; }
+        th, td { padding:0.75rem 1rem; text-align:left; border-bottom:1px solid #1e293b; font-size:0.9rem; }
+        th { color:#a1a1aa; font-weight:600; font-size:0.8rem; text-transform:uppercase; }
+        tr:hover { background:rgba(99,102,241,0.05); }
+        .badge { padding:0.25rem 0.75rem; border-radius:9999px; font-size:0.75rem; font-weight:600; }
+        .badge-green { background:rgba(52,211,153,0.15); color:#34d399; }
+        .badge-blue { background:rgba(99,102,241,0.15); color:#818cf8; }
+        .badge-yellow { background:rgba(251,191,36,0.15); color:#fbbf24; }
+        .programs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:2rem; }
+        .program-card { background:#11181b; border:1px solid #1e293b; border-radius:0.75rem; padding:1.25rem; }
+        .program-card h3 { font-size:1rem; margin-bottom:0.5rem; }
+        .program-card .commission { color:#34d399; font-weight:700; font-size:1.1rem; }
+        .program-card .meta { color:#a1a1aa; font-size:0.8rem; margin-top:0.5rem; }
+        .link-input-group { display:flex; gap:0.5rem; }
+        .link-input-group input { flex:1; }
+        @media(max-width:768px) { .sidebar{display:none} .stats-row{grid-template-columns:repeat(2,1fr)} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/dashboard" class="nav-logo"><div class="icon">💰</div> gennim.ai</a>
+        <div class="main-content" style="flex:1;padding:2rem;">
+            <div class="tool-header">
+                <h1>💰 Affiliate Link Manager</h1>
+                <p>Track your affiliate links, clicks, conversions, and revenue across all programs.</p>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card"><div class="value">{{ total_affiliate_clicks }}</div><div class="label">Total Clicks</div></div>
+                <div class="stat-card"><div class="value">${{ "%.2f"|format(total_affiliate_revenue) }}</div><div class="label">Revenue</div></div>
+                <div class="stat-card"><div class="value">{{ links|length }}</div><div class="label">Active Links</div></div>
+                <div class="stat-card"><div class="value">10</div><div class="label">Programs</div></div>
+            </div>
+            <div class="form-group" style="max-width:600px;">
+                <label>Add New Affiliate Link</label>
+                <div class="link-input-group">
+                    <select id="aff-platform" style="flex:1;">
+                        {% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+                    </select>
+                    <input type="text" id="aff-link" placeholder="Paste your affiliate link...">
+                    <button class="add-btn" onclick="addLink()">Add</button>
+                </div>
+            </div>
+            <h2 style="font-size:1.5rem;font-weight:700;margin:2rem 0 1rem">Your Links</h2>
+            <table>
+                <thead><tr><th>Platform</th><th>Link</th><th>Clicks</th><th>Conversions</th><th>Revenue</th></tr></thead>
+                <tbody>
+                    {% for link in links %}
+                    <tr>
+                        <td><span class="badge badge-blue">{{ link.platform }}</span></td>
+                        <td style="font-size:0.85rem;word-break:break-all">{{ link.link[:60] }}...</td>
+                        <td>{{ link.clicks }}</td>
+                        <td>{{ link.conversions }}</td>
+                        <td style="color:#34d399;font-weight:600">${{ "%.2f"|format(link.revenue) }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if links|length == 0 %}
+                    <tr><td colspan="5" style="text-align:center;color:#a1a1aa;padding:2rem">No affiliate links yet. Add your first one above!</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <h2 style="font-size:1.5rem;font-weight:700;margin:2rem 0 1rem">Available Programs</h2>
+            <div class="programs-grid">
+                {% for p in programs %}
+                <div class="program-card">
+                    <h3>{{ p.name }}</h3>
+                    <div class="commission">{{ p.commission }}</div>
+                    <div class="meta">{{ p.payout }} | Cookie: {{ p.cookie }}<br>{{ p.niche }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </nav>
+    <script>
+        async function addLink() {
+            const platform = document.getElementById('aff-platform').value;
+            const link = document.getElementById('aff-link').value;
+            if (!link) return alert('Enter an affiliate link');
+            const resp = await fetch('/api/affiliate/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ platform, link })
+            });
+            const data = await resp.json();
+            if (data.success) { location.reload(); }
+        }
+    </script>
+</body>
+</html>

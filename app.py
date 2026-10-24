@@ -126,6 +126,26 @@ class AnalyticsEvent(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class AffiliateLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    platform = db.Column(db.String(50))
+    link = db.Column(db.String(500))
+    clicks = db.Column(db.Integer, default=0)
+    conversions = db.Column(db.Integer, default=0)
+    revenue = db.Column(db.Float, default=0.0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class VideoGen(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    prompt = db.Column(db.String(500))
+    video_url = db.Column(db.String(500))
+    status = db.Column(db.String(20), default='pending')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 with app.app_context():
     try:
         db.create_all()
@@ -301,6 +321,33 @@ def generate_seo_data(keyword):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+
+def generate_thumbnail_prompt(video_title, style='clickbait'):
+    system = "You are a YouTube thumbnail expert. Generate detailed image generation prompts for eye-catching thumbnails."
+    user = f"Create a detailed AI image prompt for a YouTube thumbnail titled: '{video_title}'. Style: {style}. Include: color scheme, facial expression, text overlay, composition, emotional trigger."
+    prompt = ai_engine.generate(system, user, max_tokens=600)
+    return {
+        'video_title': video_title, 'thumbnail_prompt': prompt, 'style': style,
+        'suggested_text': video_title[:40] + "...",
+        'color_scheme': random.choice(['red+yellow (urgency)', 'blue+white (trust)', 'green+black (tech)', 'purple+orange (energy)']),
+        'clickbait_score': random.randint(65, 98)
+    }
+
+
+def get_affiliate_programs():
+    return [
+        {'id': 'systeme', 'name': 'Systeme.io', 'commission': '60% recurring', 'payout': '$30 minimum', 'cookie': '30 days', 'niche': 'Email marketing, funnels'},
+        {'id': 'cloudways', 'name': 'Cloudways', 'commission': '$30 + 7% lifetime', 'payout': 'Monthly', 'cookie': '180 days', 'niche': 'Cloud hosting'},
+        {'id': 'hubspot', 'name': 'HubSpot', 'commission': '30% recurring', 'payout': 'Monthly', 'cookie': '180 days', 'niche': 'CRM, marketing tools'},
+        {'id': 'bluehost', 'name': 'Bluehost', 'commission': '$65 per sale', 'payout': 'Monthly', 'cookie': '60 days', 'niche': 'WordPress hosting'},
+        {'id': 'semrush', 'name': 'Semrush', 'commission': '40% recurring', 'payout': 'Net 15', 'cookie': '120 days', 'niche': 'SEO tools'},
+        {'id': 'namecheap', 'name': 'Namecheap', 'commission': 'Varies', 'payout': 'Monthly', 'cookie': '60 days', 'niche': 'Domain + hosting'},
+        {'id': 'canva', 'name': 'Canva Pro', 'commission': '30% recurring', 'payout': 'PayPal', 'cookie': '30 days', 'niche': 'Design tools'},
+        {'id': 'convertkit', 'name': 'ConvertKit', 'commission': '30% recurring', 'payout': 'PayPal', 'cookie': '120 days', 'niche': 'Email marketing'},
+        {'id': 'notion', 'name': 'Notion', 'commission': 'Varies', 'payout': 'Net 30', 'cookie': '30 days', 'niche': 'Productivity'},
+        {'id': 'loom', 'name': 'Loom', 'commission': '25% recurring', 'payout': 'PayPal', 'cookie': '90 days', 'niche': 'Video messaging'}
+    ]
+
 # EMAIL AUTOMATION
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -536,6 +583,32 @@ def blog_writer():
 def social_media():
     return render_template('social-media.html')
 
+@app.route('/tools/youtube-script')
+@login_required
+def youtube_script():
+    return render_template('youtube-script.html')
+
+@app.route('/tools/video-generator')
+@login_required
+def video_generator():
+    return render_template('video-generator.html')
+
+@app.route('/tools/thumbnail')
+@login_required
+def thumbnail_generator():
+    return render_template('thumbnail.html')
+
+@app.route('/tools/affiliate')
+@login_required
+def affiliate_manager():
+    programs = get_affiliate_programs()
+    links = AffiliateLink.query.filter_by(user_id=current_user.id).all()
+    total_affiliate_clicks = sum(l.clicks or 0 for l in links)
+    total_affiliate_revenue = sum(l.revenue or 0.0 for l in links)
+    return render_template('affiliate.html', programs=programs, links=links,
+                           total_affiliate_clicks=total_affiliate_clicks,
+                           total_affiliate_revenue=total_affiliate_revenue)
+
 @app.route('/tools/image-generator')
 @login_required
 def image_generator():
@@ -653,6 +726,62 @@ def api_publish_wordpress():
 def api_test_wordpress():
     result = WordPressIntegration.test_connection(current_user.wordpress_url, current_user.wordpress_username, current_user.wordpress_app_password)
     return jsonify(result)
+
+@app.route('/api/generate-youtube-script', methods=['POST'])
+@login_required
+def api_generate_youtube_script():
+    data = request.json
+    result = generate_youtube_script(data.get('topic', 'Tech Tools'), data.get('tone', 'Conversational'), data.get('length', 10), data.get('target_audience', 'Tech enthusiasts'))
+    content = Content(user_id=current_user.id, type='youtube_script', title=f"Script: {data.get('topic', 'Tech Tools')}", content_html=result['script'], metadata=json.dumps({'duration': result.get('estimated_duration'), 'hashtags': result.get('hashtags'), 'word_count': result.get('word_count')}))
+    db.session.add(content)
+    db.session.commit()
+    current_user.credits = max(0, current_user.credits - 2)
+    db.session.commit()
+    return jsonify({'success': True, **result})
+
+@app.route('/api/generate-video-prompt', methods=['POST'])
+@login_required
+def api_generate_video_prompt():
+    data = request.json
+    result = generate_video_prompt(data.get('topic', 'AI Tools'), data.get('style', 'Cinematic'), data.get('duration', 30))
+    video = VideoGen(user_id=current_user.id, prompt=result['prompt'], status='pending')
+    db.session.add(video)
+    db.session.commit()
+    return jsonify({'success': True, 'video_id': video.id, **result})
+
+@app.route('/api/generate-thumbnail', methods=['POST'])
+@login_required
+def api_generate_thumbnail():
+    data = request.json
+    result = generate_thumbnail_prompt(data.get('video_title', 'My Video'), data.get('style', 'clickbait'))
+    return jsonify({'success': True, **result})
+
+@app.route('/api/affiliate/add', methods=['POST'])
+@login_required
+def api_affiliate_add():
+    data = request.json
+    link = AffiliateLink(user_id=current_user.id, platform=data.get('platform'), link=data.get('link'))
+    db.session.add(link)
+    db.session.commit()
+    return jsonify({'success': True, 'id': link.id})
+
+@app.route('/api/affiliate/links')
+@login_required
+def api_affiliate_links():
+    links = AffiliateLink.query.filter_by(user_id=current_user.id).all()
+    return jsonify({'success': True, 'links': [{'id': l.id, 'platform': l.platform, 'link': l.link, 'clicks': l.clicks, 'conversions': l.conversions, 'revenue': l.revenue} for l in links]})
+
+@app.route('/api/programs', methods=['GET'])
+@login_required
+def api_programs():
+    return jsonify({'success': True, 'programs': get_affiliate_programs()})
+
+@app.route('/api/video-gen/status/<int:video_id>')
+@login_required
+def api_video_status(video_id):
+    video = VideoGen.query.filter_by(id=video_id, user_id=current_user.id).first_or_404()
+    return jsonify({'success': True, 'status': video.status, 'video_url': video.video_url, 'prompt': video.prompt})
+
 
 @app.route('/api/create-payment', methods=['POST'])
 @login_required

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Script Generator — gennim.ai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; }
+        body { min-height:100vh; background:#09090b; color:#fafafa; }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; border-bottom:1px solid #27272a; background:#09090b; position:sticky; top:0; z-index:100; }
+        .nav-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.25rem; text-decoration:none; color:#fafafa; }
+        .nav-logo .icon { width:32px; height:32px; background:linear-gradient(135deg,#6366f1,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+        .nav-links { display:flex; gap:2rem; }
+        .nav-links a { color:#a1a1aa; text-decoration:none; font-size:0.9rem; font-weight:500; transition:color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color:#fafafa; }
+        .nav-actions { display:flex; align-items:center; gap:1rem; }
+        .upgrade-btn { padding:0.5rem 1.25rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.5rem; font-weight:600; font-size:0.85rem; cursor:pointer; }
+        .user-avatar { width:36px; height:36px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+        .main-layout { display:flex; min-height:calc(100vh - 65px); }
+        .sidebar { width:240px; padding:1.5rem 1rem; border-right:1px solid #1a1a1c; background:#0c0c0e; }
+        .sidebar-link { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; color:#a1a1aa; text-decoration:none; border-radius:0.5rem; font-size:0.9rem; margin-bottom:0.25rem; transition:all 0.2s; cursor:pointer; }
+        .sidebar-link:hover { background:#18181b; color:#fafafa; }
+        .sidebar-link.active { background:rgba(99,102,241,0.1); color:#818cf8; }
+        .main-content { flex:1; padding:2rem; max-width:1200px; }
+        .tool-header { margin-bottom:2rem; }
+        .tool-header h1 { font-size:2rem; font-weight:800; margin-bottom:0.5rem; }
+        .tool-header p { color:#a1a1aa; }
+        .form-group { margin-bottom:1.5rem; }
+        .form-group label { display:block; font-weight:600; margin-bottom:0.5rem; color:#e8eaed; font-size:0.9rem; }
+        .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.75rem 1rem; background:#18181b; border:1px solid #27272a; border-radius:0.5rem; color:#fafafa; font-size:0.95rem; font-family:inherit; }
+        .form-group textarea { min-height:100px; resize:vertical; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:#6366f1; }
+        .generate-btn { padding:0.875rem 2rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; border-radius:0.5rem; font-weight:700; font-size:1rem; cursor:pointer; transition:all 0.2s; }
+        .generate-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(99,102,241,0.4); }
+        .generate-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .output-box { background:#11181b; border:1px solid #1e293b; border-radius:1rem; padding:1.5rem; margin-top:2rem; white-space:pre-wrap; font-family:'JetBrains Mono',monospace; font-size:0.9rem; line-height:1.7; color:#e8eaed; max-height:600px; overflow-y:auto; }
+        .output-box h2 { color:#818cf8; margin-top:1rem; }
+        .output-box h3 { color:#c084fc; margin-top:0.75rem; }
+        .script-meta { display:flex; gap:1.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+        .script-meta span { background:rgba(99,102,241,0.1); padding:0.25rem 0.75rem; border-radius:9999px; font-size:0.8rem; color:#818cf8; }
+        .title-suggestions { margin-top:1rem; }
+        .title-suggestions h3 { color:#818cf8; margin-bottom:0.5rem; font-size:0.95rem; }
+        .title-suggestions p { background:#18181b; padding:0.5rem 1rem; border-radius:0.5rem; margin-bottom:0.5rem; font-size:0.9rem; cursor:pointer; border:1px solid transparent; }
+        .title-suggestions p:hover { border-color:#6366f1; }
+        @media(max-width:768px) { .sidebar{display:none} .nav-links{display:none} }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/dashboard" class="nav-logo"><div class="icon">🎬</div> gennim.ai</a>
+        <div class="nav-links"><a href="/dashboard">Dashboard</a><a href="/tools/blog-writer">Blog</a><a href="/tools/social-media">Social</a><a href="/tools/youtube-script" class="active">YouTube</a><a href="/tools/video-generator">Video</a><a href="/tools/affiliate">Affiliate</a><a href="/pricing">Pricing</a></div>
+        <div class="nav-actions"><button class="upgrade-btn" onclick="location.href='/pricing'">Upgrade Pro</button><div class="user-avatar">{{ current_user.name[0].upper() }}</div></div>
+    </nav>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <a class="sidebar-link" href="/dashboard"><span>📊</span> Dashboard</a>
+            <a class="sidebar-link" href="/tools/blog-writer"><span>📝</span> Blog Writer</a>
+            <a class="sidebar-link" href="/tools/social-media"><span>📱</span> Social Media</a>
+            <a class="sidebar-link active" href="/tools/youtube-script"><span>🎬</span> YouTube Script</a>
+            <a class="sidebar-link" href="/tools/video-generator"><span>🎥</span> Video Generator</a>
+            <a class="sidebar-link" href="/tools/thumbnail"><span>🖼️</span> Thumbnail</a>
+            <a class="sidebar-link" href="/tools/affiliate"><span>💰</span> Affiliate</a>
+            <a class="sidebar-link" href="/content-calendar"><span>📅</span> Calendar</a>
+            <a class="sidebar-link" href="/analytics"><span>📈</span> Analytics</a>
+        </aside>
+        <main class="main-content">
+            <div class="tool-header">
+                <h1>🎬 YouTube Script Generator</h1>
+                <p>Generate complete YouTube scripts with hooks, timestamps, and CTAs for your tech tools channel.</p>
+            </div>
+            <div class="form-group">
+                <label>Video Topic</label>
+                <input type="text" id="yt-topic" placeholder="e.g. Best AI tools for content creation 2026" style="font-size:1.1rem; padding:1rem;">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+                <div class="form-group">
+                    <label>Tone</label>
+                    <select id="yt-tone">
+                        <option value="Conversational">Conversational</option>
+                        <option value="Professional">Professional</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Energetic">Energetic</option>
+                        <option value="Educational">Educational</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Video Length (minutes)</label>
+                    <select id="yt-length">
+                        <option value="5">5 min</option>
+                        <option value="10" selected>10 min</option>
+                        <option value="15">15 min</option>
+                        <option value="20">20 min</option>
+                        <option value="30">30 min</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Audience</label>
+                    <input type="text" id="yt-audience" placeholder="e.g. Tech enthusiasts" value="Tech enthusiasts">
+                </div>
+            </div>
+            <button class="generate-btn" id="yt-generate" onclick="generateScript()">Generate Script</button>
+            <div id="yt-output" style="display:none; margin-top:2rem;">
+                <div class="script-meta" id="yt-meta"></div>
+                <div class="output-box" id="yt-script"></div>
+                <div class="title-suggestions" id="yt-titles"></div>
+            </div>
+        </main>
+    </div>
+    <script>
+        async function generateScript() {
+            const topic = document.getElementById('yt-topic').value;
+            const tone = document.getElementById('yt-tone').value;
+            const length = document.getElementById('yt-length').value;
+            const audience = document.getElementById('yt-audience').value;
+            if (!topic) return alert('Enter a topic');
+            const btn = document.getElementById('yt-generate');
+            btn.disabled = true; btn.textContent = 'Generating...';
+            const resp = await fetch('/api/generate-youtube-script', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ topic, tone, length: parseInt(length), target_audience: audience })
+            });
+            const data = await resp.json();
+            btn.disabled = false; btn.textContent = 'Generate Script';
+            if (data.success) {
+                document.getElementById('yt-output').style.display = 'block';
+                document.getElementById('yt-meta').innerHTML = `
+                    <span>📝 ${data.word_count} words</span>
+                    <span>⏱️ ${data.estimated_duration}</span>
+                    <span>🏷️ ${data.hashtags}</span>
+                `;
+                document.getElementById('yt-script').textContent = data.script;
+                const titlesHtml = '<h3>💡 Title Suggestions</h3>' + data.title_suggestions.map(t => `<p onclick="navigator.clipboard.writeText('${t.replace(/'/g, "\\'")}')">${t}</p>`).join('');
+                document.getElementById('yt-titles').innerHTML = titlesHtml;
+            }
+        }
+    </script>
+</body>
+</html>
